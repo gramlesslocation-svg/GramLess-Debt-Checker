@@ -1,1 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>GramLess Debt Checker</title>
+
+<style>
+
+:root {
+    --black: #0d0d0d;
+    --dark: #111111;
+    --yellow: #f5c400;
+    --white: #ffffff;
+    --gray: #aaaaaa;
+    --red: #ff3030;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: var(--black);
+    color: var(--white);
+    min-height: 100vh;
+}
+
+/* HEADER */
+
+header {
+    background: #111;
+    border-bottom: 1px solid #252525;
+    padding: 18px 25px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    color: var(--yellow);
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.header-status {
+    font-size: 13px;
+    color: #888;
+}
+
+/* HERO */
+
+.hero {
+    width: 92%;
+    max-width: 900px;
+
+    margin: 35px auto 25px;
+
+    padding: 35px 25px;
+
+    text-align: center;
+
+    background: rgba(255,255,255,0.04);
+
+    border: 1px solid rgba(255,255,255,0.08);
+
+    border-radius: 20px;
+
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.hero h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    color: #999;
+    font-size: 14px;
+}
+
+/* SEARCH */
+
+.search-container {
+    width: 92%;
+    max-width: 900px;
+    margin: 0 auto 20px;
+}
+
+#search {
+    width: 100%;
+
+    padding: 15px 18px;
+
+    background: #151515;
+
+    border: 1px solid #292929;
+
+    border-radius: 13px;
+
+    color: white;
+
+    font-size: 15px;
+
+    outline: none;
+}
+
+#search:focus {
+    border-color: var(--yellow);
+
+    box-shadow: 0 0 12px rgba(245,196,0,0.15);
+}
+
+/* STORE LIST */
+
+.store-list {
+    width: 92%;
+    max-width: 900px;
+
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+/* STORE CARD */
+
+.store {
+    background: #121212;
+
+    border: 1px solid #262626;
+
+    border-radius: 16px;
+
+    padding: 18px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    transition: 0.25s;
+
+    cursor: pointer;
+}
+
+.store:hover {
+    transform: translateY(-2px);
+
+    border-color: #3a3a3a;
+
+    background: #161616;
+}
+
+/* STORE INFO */
+
+.store-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* RED DEBT LIGHT */
+
+.debt-light {
+    width: 13px;
+    height: 13px;
+
+    background: var(--red);
+
+    border-radius: 50%;
+
+    box-shadow: 0 0 8px var(--red);
+
+    animation: pulse 1.3s infinite;
+}
+
+@keyframes pulse {
+
+    0% {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 6px var(--red);
+    }
+
+    50% {
+        opacity: 0.35;
+        transform: scale(0.8);
+        box-shadow: 0 0 18px var(--red);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 6px var(--red);
+    }
+
+}
+
+.store-name {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.store-location {
+    color: #888;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/* BUTTON */
+
+.location-button {
+
+    background: transparent;
+
+    color: var(--yellow);
+
+    border: 1px solid var(--yellow);
+
+    padding: 9px 13px;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    transition: 0.25s;
+
+    white-space: nowrap;
+}
+
+.location-button:hover {
+
+    background: var(--yellow);
+
+    color: black;
+
+    box-shadow: 0 0 15px rgba(245,196,0,0.4);
+
+}
+
+/* NO RESULTS */
+
+.no-results {
+
+    text-align: center;
+
+    color: #777;
+
+    padding: 30px;
+
+    display: none;
+}
+
+/* FOOTER */
+
+footer {
+
+    margin-top: 50px;
+
+    padding: 35px;
+
+    text-align: center;
+
+    background: #080808;
+
+    color: #777;
+
+    font-size: 13px;
+}
+
+footer strong {
+    color: var(--yellow);
+}
+
+/* MOBILE */
+
+@media(max-width:600px) {
+
+    header {
+        padding: 15px;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+
+    .header-status {
+        display: none;
+    }
+
+    .hero {
+        margin-top: 25px;
+        padding: 30px 18px;
+    }
+
+    .hero h1 {
+        font-size: 27px;
+    }
+
+    .store {
+        padding: 15px;
+    }
+
+    .store-name {
+        font-size: 15px;
+    }
+
+    .location-button {
+        padding: 8px 9px;
+        font-size: 12px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        GramLess
+    </div>
+
+    <div class="header-status">
+        Internal Debt Checker
+    </div>
+
+</header>
+
+
+<section class="hero">
+
+    <h1>Debt Checker</h1>
+
+    <p>
+        Stores and markets that currently have an outstanding debt.
+    </p>
+
+</section>
+
+
+<div class="search-container">
+
+    <input
+        type="text"
+        id="search"
+        placeholder="Search for a store..."
+    >
+
+</div>
+
+
+<div class="store-list" id="storeList">
+
+    <!-- STORES WILL APPEAR HERE -->
+
+</div>
+
+
+<div class="no-results" id="noResults">
+
+    No store found.
+
+</div>
+
+
+<footer>
+
+    <strong>GramLess</strong>
+
+    <br><br>
+
+    Internal Debt Checker
+
+</footer>
+
+
+<script>
+
+/*
+==========================================
+ADD YOUR STORES HERE
+==========================================
+*/
+
+const stores = [
+
+    {
+        name: "Example Market",
+        location: "Beirut",
+        mapLink: "https://gramlesslocation-svg.github.io/GramLess-Locations-/"
+    },
+
+    {
+        name: "Example Supermarket",
+        location: "Antelias",
+        mapLink: "https://gramlesslocation-svg.github.io/GramLess-Locations-/"
+    },
+
+    {
+        name: "Example Grocery",
+        location: "Jounieh",
+        mapLink: "https://gramlesslocation-svg.github.io/GramLess-Locations-/"
+    }
+
+];
+
+
+/*
+==========================================
+DISPLAY STORES
+==========================================
+*/
+
+const storeList = document.getElementById("storeList");
+const search = document.getElementById("search");
+const noResults = document.getElementById("noResults");
+
+
+function displayStores(storeArray) {
+
+    storeList.innerHTML = "";
+
+    if (storeArray.length === 0) {
+
+        noResults.style.display = "block";
+
+        return;
+
+    }
+
+    noResults.style.display = "none";
+
+
+    storeArray.forEach(store => {
+
+        const card = document.createElement("div");
+
+        card.className = "store";
+
+
+        card.innerHTML = `
+
+            <div class="store-info">
+
+                <div class="debt-light"></div>
+
+                <div>
+
+                    <div class="store-name">
+                        ${store.name}
+                    </div>
+
+                    <div class="store-location">
+                        📍 ${store.location}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <a
+                class="location-button"
+                href="${store.mapLink}"
+                target="_blank"
+                onclick="event.stopPropagation();"
+            >
+                📍 Location
+            </a>
+
+        `;
+
+
+        storeList.appendChild(card);
+
+    });
+
+}
+
+
+/*
+==========================================
+SEARCH
+==========================================
+*/
+
+search.addEventListener("input", () => {
+
+    const searchText =
+        search.value.toLowerCase().trim();
+
+
+    const filteredStores =
+        stores.filter(store =>
+
+            store.name
+                .toLowerCase()
+                .includes(searchText)
+
+            ||
+
+            store.location
+                .toLowerCase()
+                .includes(searchText)
+
+        );
+
+
+    displayStores(filteredStores);
+
+});
+
+
+
+displayStores(stores);
+
+</script>
+
+</body>
+</html>
