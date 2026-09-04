@@ -6,7 +6,7 @@
 
 <title>GramLess Debt Checker</title>
 
-<style>/
+<style>
 
 :root {
     --black: #0d0d0d;
@@ -754,7 +754,7 @@ function renderStores(list = stores) {
         const card = document.createElement("div");
 
         card.className =
-            "store " +
+            "store-card " +
             (debtOn ? "debt-on" : "debt-off");
 
         card.innerHTML = `
