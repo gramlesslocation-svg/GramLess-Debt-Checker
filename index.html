@@ -327,6 +327,52 @@ footer strong {
 
 }
 
+/* Debt toggle */
+.debt-toggle {
+    border: none;
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: 0.2s;
+}
+
+.debt-toggle.on {
+    background: #ff2b2b;
+    color: white;
+}
+
+.debt-toggle.off {
+    background: #555;
+    color: white;
+}
+
+.debt-toggle:hover {
+    transform: scale(1.04);
+}
+
+/* Debt ON appearance */
+.store-card.debt-on .store-name {
+    color: #ff3030;
+    animation: debtPulse 1.2s infinite;
+}
+
+.store-card.debt-off .store-name {
+    color: white;
+    animation: none;
+}
+
+@keyframes debtPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.45;
+    }
+}
+
+    
 </style>
 </head>
 
@@ -392,13 +438,10 @@ footer strong {
 </footer>
 
 
+
+
 <script>
 
-/*
-==========================================
-ADD YOUR STORES HERE
-==========================================
-*/
 
 const stores = [
 
@@ -632,116 +675,170 @@ const stores = [
 
     ];
 
-/*
-==========================================
-DISPLAY STORES
-==========================================
-*/
-
-const storeList = document.getElementById("storeList");
-const search = document.getElementById("search");
-const noResults = document.getElementById("noResults");
 
 
-function displayStores(storeArray) {
+/* ================================
+   DEBT STATUS STORAGE
+   ================================ */
 
-    storeList.innerHTML = "";
+const STORAGE_KEY = "gramless_debt_status_v1";
 
-    if (storeArray.length === 0) {
+let debtStatus = JSON.parse(
+    localStorage.getItem(STORAGE_KEY) || "{}"
+);
 
-        noResults.style.display = "block";
 
-        return;
+/* ================================
+   GET STORE STATUS
+   ================================ */
 
+function isDebtOn(store) {
+
+    // New stores are ON by default
+    if (debtStatus[store.name] === undefined) {
+        return true;
     }
 
-    noResults.style.display = "none";
-
-
-    storeArray.forEach(store => {
-
-        const card = document.createElement("div");
-
-        card.className = "store";
-
-
-        card.innerHTML = `
-
-            <div class="store-info">
-
-                <div class="debt-light"></div>
-
-                <div>
-
-                    <div class="store-name">
-                        ${store.name}
-                    </div>
-
-                    <div class="store-location">
-                        📍 ${store.location}
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <a
-                class="location-button"
-                href="${store.mapLink}"
-                target="_blank"
-                onclick="event.stopPropagation();"
-            >
-                📍 Location
-            </a>
-
-        `;
-
-
-        storeList.appendChild(card);
-
-    });
-
+    return debtStatus[store.name];
 }
 
 
-/*
-==========================================
-SEARCH
-==========================================
-*/
+/* ================================
+   SAVE STATUS
+   ================================ */
 
-search.addEventListener("input", () => {
+function saveDebtStatus() {
 
-    const searchText =
-        search.value.toLowerCase().trim();
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(debtStatus)
+    );
+}
 
 
-    const filteredStores =
-        stores.filter(store =>
+/* ================================
+   TOGGLE DEBT
+   ================================ */
 
-            store.name
-                .toLowerCase()
-                .includes(searchText)
+function toggleDebt(storeName) {
 
-            ||
+    // Reverse current status
+    debtStatus[storeName] = !isDebtOn({
+        name: storeName
+    });
 
-            store.location
-                .toLowerCase()
-                .includes(searchText)
+    // Save permanently on this browser/device
+    saveDebtStatus();
 
+    // Refresh the store list
+    renderStores();
+}
+
+
+/* ================================
+   DISPLAY STORES
+   ================================ */
+
+function renderStores(list = stores) {
+
+    const container = document.getElementById("storeList");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    list.forEach(store => {
+
+        const debtOn = isDebtOn(store);
+
+        const card = document.createElement("div");
+
+        card.className =
+            "store-card " +
+            (debtOn ? "debt-on" : "debt-off");
+
+        card.innerHTML = `
+
+            <div class="debt-light ${debtOn ? "active" : ""}"></div>
+
+            <div class="store-info">
+
+                <div class="store-name">
+                    ${store.name}
+                </div>
+
+                <div class="store-location">
+                    📍 ${store.location || "Location available"}
+                </div>
+
+                <button
+                    class="debt-toggle ${debtOn ? "on" : "off"}"
+                    onclick="toggleDebt('${store.name.replace(/'/g, "\\'")}')"
+                >
+                    DEBT: ${debtOn ? "ON" : "OFF"}
+                </button>
+
+                <a
+                    class="location-button"
+                    href="${store.mapLink}"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    📍 View Location
+                </a>
+
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+
+/* ================================
+   SEARCH
+   ================================ */
+
+function searchStores() {
+
+    const searchInput =
+        document.getElementById("search");
+
+    if (!searchInput) return;
+
+    const search =
+        searchInput.value.toLowerCase().trim();
+
+    const filtered = stores.filter(store =>
+        store.name.toLowerCase().includes(search) ||
+        store.location.toLowerCase().includes(search)
+    );
+
+    renderStores(filtered);
+}
+
+
+/* ================================
+   START
+   ================================ */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    renderStores();
+
+    const searchInput =
+        document.getElementById("search");
+
+    if (searchInput) {
+        searchInput.addEventListener(
+            "input",
+            searchStores
         );
-
-
-    displayStores(filteredStores);
+    }
 
 });
 
-
-
-displayStores(stores);
-
 </script>
-
+    
 </body>
 </html>
